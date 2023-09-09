@@ -1,9 +1,10 @@
 ### inital backtest function for 2 tickers w/ start & end date period  ###
 
-
+import argparse
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
+import datetime
 
 class Backtester:
     def __init__(self):
@@ -45,9 +46,20 @@ class Backtester:
         plt.legend()
         plt.show()
 
-# Usage example
-if __name__ == "__main__":
+def main():
+    parser = argparse.ArgumentParser(description="Stock Backtester")
+    parser.add_argument('ticker1', type=str, help='Ticker symbol for the first stock (Ex: APPL)')
+    parser.add_argument('ticker2', type=str, help='Ticker symbol for the second stock (Ex: MSFT)')
+    parser.add_argument('start_date', type=str, help='Start date for data fetching (YYYY-MM-DD)')
+    parser.add_argument('--end_date', type=str, default=datetime.date.today().strftime('%Y-%m-%d'),
+                        help='End date for data fetching (default: current date, YYYY-MM-DD)')
+    args = parser.parse_args()
+
     backtester = Backtester()
-    backtester.fetch_data('AAPL', '2020-01-01', '2023-01-01')
-    backtester.fetch_data('MSFT', '2020-01-01', '2023-01-01')
-    backtester.backtest('AAPL', 'MSFT', '2020-01-01', '2023-01-01')
+    backtester.fetch_data(args.ticker1, args.start_date, args.end_date)
+    backtester.fetch_data(args.ticker2, args.start_date, args.end_date)
+    backtester.backtest(args.ticker1, args.ticker2, args.start_date, args.end_date)
+
+# python .\F-Backtest.py AAPL MSFT 2020-01-01 2023-01-01
+if __name__ == "__main__":
+    main()
